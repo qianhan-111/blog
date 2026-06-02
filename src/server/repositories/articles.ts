@@ -553,7 +553,7 @@ export async function updateArticle(
     payload.contentMarkdown ?? null,
     payload.status,
   ]
-  const publishTimeSql = Object.hasOwn(options, 'publishTime')
+  const publishTimeSql = Object.prototype.hasOwnProperty.call(options, 'publishTime')
     ? `, publish_time = $${params.push(options.publishTime ?? null)}`
     : ''
 

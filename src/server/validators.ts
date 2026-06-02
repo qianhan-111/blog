@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import type {
   AdminArticleListQuery,
+  AdminUserListQuery,
   ArticleListQuery,
   ArticleSortField,
   MyArticleListQuery,
@@ -207,6 +208,13 @@ type ParsedAdminArticleListQuery = ParsedAuthorArticleListQuery & {
   authorId?: AdminArticleListQuery['authorId']
 }
 
+type ParsedAdminUserListQuery = z.infer<typeof adminUserListQuerySchema> & {
+  page?: number
+  pageSize?: number
+  keyword?: string
+  status?: AdminUserListQuery['status']
+}
+
 function normalizeParsedArticleListQuery(query: ParsedArticleListQuery): ArticleListQuery {
   return {
     page: query.page ?? 1,
@@ -239,5 +247,16 @@ export function parseAdminArticleListQuery(input: unknown): AdminArticleListQuer
     ...normalizeParsedArticleListQuery(query),
     status: query.status,
     authorId: query.authorId,
+  }
+}
+
+export function parseAdminUserListQuery(input: unknown): AdminUserListQuery {
+  const query = adminUserListQuerySchema.parse(input) as ParsedAdminUserListQuery
+
+  return {
+    page: query.page ?? 1,
+    pageSize: query.pageSize ?? 20,
+    keyword: query.keyword ?? '',
+    status: query.status,
   }
 }
