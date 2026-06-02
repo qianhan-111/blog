@@ -1,13 +1,10 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import adminCategoryDetailHandler from '../../../api/admin/categories/[id]'
-import adminCategoriesHandler from '../../../api/admin/categories/index'
-import adminTagDetailHandler from '../../../api/admin/tags/[id]'
-import adminTagsHandler from '../../../api/admin/tags/index'
+import apiHandler from '../../../api/[...path]'
 import { ApiError } from '../../../src/server/errors'
 import type { CurrentUser } from '../../../src/server/types'
-import { createMockRequest, createMockResponse, readJsonResponse } from './test-utils'
+import { createApiRequest, createMockResponse, readJsonResponse } from './test-utils'
 
 const authMocks = vi.hoisted(() => ({
   getCurrentUserFromRequest: vi.fn(),
@@ -54,18 +51,16 @@ describe('admin taxonomy API endpoints', () => {
     const updateResponse = createMockResponse()
     const deleteResponse = createMockResponse()
 
-    await adminCategoriesHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/categories', {
       method: 'POST',
       body: { name: 'Vue 3', description: 'Vue articles' },
     }), createResponse)
-    await adminCategoryDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/categories/1', {
       method: 'PUT',
-      query: { id: '1' },
       body: { name: 'Vue 3 Updated', description: 'Updated' },
     }), updateResponse)
-    await adminCategoryDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/categories/1', {
       method: 'DELETE',
-      query: { id: '1' },
     }), deleteResponse)
 
     expect(taxonomyMocks.createCategory).toHaveBeenCalledWith(adminUser, {
@@ -88,18 +83,16 @@ describe('admin taxonomy API endpoints', () => {
     const updateResponse = createMockResponse()
     const deleteResponse = createMockResponse()
 
-    await adminTagsHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/tags', {
       method: 'POST',
       body: { name: 'Vite' },
     }), createResponse)
-    await adminTagDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/tags/2', {
       method: 'PUT',
-      query: { id: '2' },
       body: { name: 'Vite Updated' },
     }), updateResponse)
-    await adminTagDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/tags/2', {
       method: 'DELETE',
-      query: { id: '2' },
     }), deleteResponse)
 
     expect(taxonomyMocks.createTag).toHaveBeenCalledWith(adminUser, { name: 'Vite' })
@@ -112,9 +105,8 @@ describe('admin taxonomy API endpoints', () => {
     taxonomyMocks.deleteCategory.mockRejectedValue(new ApiError(409, '分类已被文章引用，不能删除'))
     const response = createMockResponse()
 
-    await adminCategoryDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/categories/1', {
       method: 'DELETE',
-      query: { id: '1' },
     }), response)
 
     expect(response.statusCode).toBe(409)

@@ -2,14 +2,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { CurrentUser, UserProfile } from '../../../src/server/types'
-import adminLoginHandler from '../../../api/admin/auth/login'
-import adminLogoutHandler from '../../../api/admin/auth/logout'
-import adminProfileHandler from '../../../api/admin/auth/profile'
-import loginHandler from '../../../api/auth/login'
-import logoutHandler from '../../../api/auth/logout'
-import profileHandler from '../../../api/auth/profile'
-import registerHandler from '../../../api/auth/register'
-import { createMockRequest, createMockResponse, readJsonResponse } from './test-utils'
+import apiHandler from '../../../api/[...path]'
+import { createApiRequest, createMockResponse, readJsonResponse } from './test-utils'
 
 const authMocks = vi.hoisted(() => ({
   getAdminProfile: vi.fn(),
@@ -60,7 +54,7 @@ describe('auth API endpoints', () => {
     })
     const response = createMockResponse()
 
-    await registerHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/auth/register', {
       method: 'POST',
       body: {
         username: 'author_demo',
@@ -82,7 +76,7 @@ describe('auth API endpoints', () => {
   it('returns 400 for invalid register payloads before calling the auth service', async () => {
     const response = createMockResponse()
 
-    await registerHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/auth/register', {
       method: 'POST',
       body: {
         username: 'a',
@@ -107,7 +101,7 @@ describe('auth API endpoints', () => {
     })
     const response = createMockResponse()
 
-    await loginHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/auth/login', {
       method: 'POST',
       body: {
         account: 'author@example.com',
@@ -134,11 +128,11 @@ describe('auth API endpoints', () => {
     const getResponse = createMockResponse()
     const putResponse = createMockResponse()
 
-    await profileHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/auth/profile', {
       method: 'GET',
       headers: { authorization: 'Bearer author-token' },
     }), getResponse)
-    await profileHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/auth/profile', {
       method: 'PUT',
       headers: { authorization: 'Bearer author-token' },
       body: {
@@ -160,7 +154,7 @@ describe('auth API endpoints', () => {
     })
     const response = createMockResponse()
 
-    await adminLoginHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/auth/login', {
       method: 'POST',
       body: {
         account: 'admin',
@@ -189,7 +183,7 @@ describe('auth API endpoints', () => {
     })
     const response = createMockResponse()
 
-    await adminProfileHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/auth/profile', {
       method: 'GET',
       headers: { authorization: 'Bearer admin-token' },
     }), response)
@@ -206,8 +200,8 @@ describe('auth API endpoints', () => {
     const authorResponse = createMockResponse()
     const adminResponse = createMockResponse()
 
-    await logoutHandler(createMockRequest({ method: 'POST' }), authorResponse)
-    await adminLogoutHandler(createMockRequest({ method: 'POST' }), adminResponse)
+    await apiHandler(createApiRequest('/api/auth/logout', { method: 'POST' }), authorResponse)
+    await apiHandler(createApiRequest('/api/admin/auth/logout', { method: 'POST' }), adminResponse)
 
     expect(readJsonResponse(authorResponse).data).toBeNull()
     expect(readJsonResponse(adminResponse).data).toBeNull()

@@ -1,15 +1,8 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import articleDetailHandler from '../../../api/articles/[id]'
-import articlePrevNextHandler from '../../../api/articles/[id]/prev-next'
-import articleListHandler from '../../../api/articles/index'
-import authorArticlesHandler from '../../../api/authors/[id]/articles'
-import authorProfileHandler from '../../../api/authors/[id]'
-import categoriesHandler from '../../../api/categories'
-import healthHandler from '../../../api/health'
-import tagsHandler from '../../../api/tags'
-import { createMockRequest, createMockResponse, readJsonResponse } from './test-utils'
+import apiHandler from '../../../api/[...path]'
+import { createApiRequest, createMockResponse, readJsonResponse } from './test-utils'
 
 const articleMocks = vi.hoisted(() => ({
   getArticlePrevNext: vi.fn(),
@@ -60,8 +53,8 @@ describe('public content API endpoints', () => {
     const categoryResponse = createMockResponse()
     const tagResponse = createMockResponse()
 
-    await categoriesHandler(createMockRequest({ method: 'GET' }), categoryResponse)
-    await tagsHandler(createMockRequest({ method: 'GET' }), tagResponse)
+    await apiHandler(createApiRequest('/api/categories', { method: 'GET' }), categoryResponse)
+    await apiHandler(createApiRequest('/api/tags', { method: 'GET' }), tagResponse)
 
     expect(readJsonResponse(categoryResponse).data).toEqual([{ id: 1, name: 'Vue 3' }])
     expect(readJsonResponse(tagResponse).data).toEqual([{ id: 2, name: 'Vite' }])
@@ -71,8 +64,8 @@ describe('public content API endpoints', () => {
     const getResponse = createMockResponse()
     const postResponse = createMockResponse()
 
-    await healthHandler(createMockRequest({ method: 'GET' }), getResponse)
-    await healthHandler(createMockRequest({ method: 'POST' }), postResponse)
+    await apiHandler(createApiRequest('/api/health', { method: 'GET' }), getResponse)
+    await apiHandler(createApiRequest('/api/health', { method: 'POST' }), postResponse)
 
     expect(readJsonResponse(getResponse).data).toEqual({ status: 'ok' })
     expect(postResponse.statusCode).toBe(405)
@@ -86,7 +79,7 @@ describe('public content API endpoints', () => {
     articleMocks.listPublicArticles.mockResolvedValue(articlePage)
     const response = createMockResponse()
 
-    await articleListHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/articles', {
       method: 'GET',
       query: {
         page: '2',
@@ -120,13 +113,11 @@ describe('public content API endpoints', () => {
     const detailResponse = createMockResponse()
     const prevNextResponse = createMockResponse()
 
-    await articleDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/articles/7', {
       method: 'GET',
-      url: '/api/articles/7',
     }), detailResponse)
-    await articlePrevNextHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/articles/7/prev-next', {
       method: 'GET',
-      query: { id: '7' },
     }), prevNextResponse)
 
     expect(articleMocks.getPublicArticleDetail).toHaveBeenCalledWith(7)
@@ -150,14 +141,12 @@ describe('public content API endpoints', () => {
     const profileResponse = createMockResponse()
     const articlesResponse = createMockResponse()
 
-    await authorProfileHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/authors/7', {
       method: 'GET',
-      query: { id: '7' },
     }), profileResponse)
-    await authorArticlesHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/authors/7/articles', {
       method: 'GET',
       query: {
-        id: '7',
         page: '1',
         pageSize: '20',
       },

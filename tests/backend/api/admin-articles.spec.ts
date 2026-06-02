@@ -1,11 +1,10 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import adminArticleDetailHandler from '../../../api/admin/articles/[id]'
-import adminArticlesHandler from '../../../api/admin/articles/index'
+import apiHandler from '../../../api/[...path]'
 import { ApiError } from '../../../src/server/errors'
 import type { CurrentUser } from '../../../src/server/types'
-import { createMockRequest, createMockResponse, readJsonResponse } from './test-utils'
+import { createApiRequest, createMockResponse, readJsonResponse } from './test-utils'
 
 const authMocks = vi.hoisted(() => ({
   getCurrentUserFromRequest: vi.fn(),
@@ -56,7 +55,7 @@ describe('admin article API endpoints', () => {
     authMocks.getCurrentUserFromRequest.mockRejectedValue(new ApiError(403, '没有访问权限'))
     const response = createMockResponse()
 
-    await adminArticlesHandler(createMockRequest({ method: 'GET' }), response)
+    await apiHandler(createApiRequest('/api/admin/articles', { method: 'GET' }), response)
 
     expect(authMocks.getCurrentUserFromRequest).toHaveBeenCalledWith(expect.anything(), 'admin')
     expect(response.statusCode).toBe(403)
@@ -66,7 +65,7 @@ describe('admin article API endpoints', () => {
     articleMocks.listAdminArticles.mockResolvedValue(articlePage)
     const response = createMockResponse()
 
-    await adminArticlesHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/articles', {
       method: 'GET',
       query: {
         page: '2',
@@ -97,13 +96,11 @@ describe('admin article API endpoints', () => {
     const putResponse = createMockResponse()
     const deleteResponse = createMockResponse()
 
-    await adminArticleDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/articles/10', {
       method: 'GET',
-      query: { id: '10' },
     }), getResponse)
-    await adminArticleDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/articles/10', {
       method: 'PUT',
-      query: { id: '10' },
       body: {
         status: 'published',
         title: 'Updated',
@@ -114,9 +111,8 @@ describe('admin article API endpoints', () => {
         coverUrl: '',
       },
     }), putResponse)
-    await adminArticleDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/articles/10', {
       method: 'DELETE',
-      query: { id: '10' },
     }), deleteResponse)
 
     expect(articleMocks.getAdminArticleDetail).toHaveBeenCalledWith(adminUser, 10)

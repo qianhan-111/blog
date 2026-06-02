@@ -1,12 +1,10 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import adminUserDetailHandler from '../../../api/admin/users/[id]'
-import adminUserStatusHandler from '../../../api/admin/users/[id]/status'
-import adminUsersHandler from '../../../api/admin/users/index'
+import apiHandler from '../../../api/[...path]'
 import { ApiError } from '../../../src/server/errors'
 import type { CurrentUser } from '../../../src/server/types'
-import { createMockRequest, createMockResponse, readJsonResponse } from './test-utils'
+import { createApiRequest, createMockResponse, readJsonResponse } from './test-utils'
 
 const authMocks = vi.hoisted(() => ({
   getCurrentUserFromRequest: vi.fn(),
@@ -57,7 +55,7 @@ describe('admin user API endpoints', () => {
     userMocks.listUsers.mockResolvedValue(userPage)
     const response = createMockResponse()
 
-    await adminUsersHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/users', {
       method: 'GET',
       query: {
         page: '2',
@@ -84,18 +82,15 @@ describe('admin user API endpoints', () => {
     const statusResponse = createMockResponse()
     const deleteResponse = createMockResponse()
 
-    await adminUserDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/users/7', {
       method: 'GET',
-      query: { id: '7' },
     }), detailResponse)
-    await adminUserStatusHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/users/7/status', {
       method: 'PATCH',
-      query: { id: '7' },
       body: { status: 'disabled' },
     }), statusResponse)
-    await adminUserDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/users/7', {
       method: 'DELETE',
-      query: { id: '7' },
     }), deleteResponse)
 
     expect(userMocks.getUserDetail).toHaveBeenCalledWith(adminUser, 7)
@@ -110,9 +105,8 @@ describe('admin user API endpoints', () => {
     userMocks.deleteUser.mockRejectedValue(new ApiError(409, '用户仍有关联文章，不能删除'))
     const response = createMockResponse()
 
-    await adminUserDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/admin/users/7', {
       method: 'DELETE',
-      query: { id: '7' },
     }), response)
 
     expect(response.statusCode).toBe(409)

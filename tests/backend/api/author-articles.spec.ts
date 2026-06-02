@@ -1,11 +1,10 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import authorArticleDetailHandler from '../../../api/author/articles/[id]'
-import authorArticlesHandler from '../../../api/author/articles/index'
+import apiHandler from '../../../api/[...path]'
 import { ApiError } from '../../../src/server/errors'
 import type { CurrentUser } from '../../../src/server/types'
-import { createMockRequest, createMockResponse, readJsonResponse } from './test-utils'
+import { createApiRequest, createMockResponse, readJsonResponse } from './test-utils'
 
 const authMocks = vi.hoisted(() => ({
   getCurrentUserFromRequest: vi.fn(),
@@ -57,7 +56,7 @@ describe('author article API endpoints', () => {
     authMocks.getCurrentUserFromRequest.mockRejectedValue(new ApiError(401, '登录已过期，请重新登录'))
     const response = createMockResponse()
 
-    await authorArticlesHandler(createMockRequest({ method: 'GET' }), response)
+    await apiHandler(createApiRequest('/api/author/articles', { method: 'GET' }), response)
 
     expect(response.statusCode).toBe(401)
     expect(readJsonResponse(response)).toMatchObject({
@@ -70,7 +69,7 @@ describe('author article API endpoints', () => {
     articleMocks.listMyArticles.mockResolvedValue(articlePage)
     const response = createMockResponse()
 
-    await authorArticlesHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/author/articles', {
       method: 'GET',
       query: {
         page: '2',
@@ -96,7 +95,7 @@ describe('author article API endpoints', () => {
     articleMocks.createMyArticle.mockResolvedValue({ id: 10, title: 'Draft' })
     const response = createMockResponse()
 
-    await authorArticlesHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/author/articles', {
       method: 'POST',
       body: {
         status: 'draft',
@@ -129,13 +128,11 @@ describe('author article API endpoints', () => {
     const putResponse = createMockResponse()
     const deleteResponse = createMockResponse()
 
-    await authorArticleDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/author/articles/10', {
       method: 'GET',
-      query: { id: '10' },
     }), getResponse)
-    await authorArticleDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/author/articles/10', {
       method: 'PUT',
-      query: { id: '10' },
       body: {
         status: 'published',
         title: 'Updated',
@@ -146,9 +143,8 @@ describe('author article API endpoints', () => {
         coverUrl: '',
       },
     }), putResponse)
-    await authorArticleDetailHandler(createMockRequest({
+    await apiHandler(createApiRequest('/api/author/articles/10', {
       method: 'DELETE',
-      query: { id: '10' },
     }), deleteResponse)
 
     expect(articleMocks.getMyArticleDetail).toHaveBeenCalledWith(authorUser, 10)

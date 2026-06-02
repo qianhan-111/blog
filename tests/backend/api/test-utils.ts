@@ -18,6 +18,13 @@ export function createMockRequest(options: {
   } as unknown as VercelRequest
 }
 
+export function createApiRequest(url: string, options: Parameters<typeof createMockRequest>[0] = {}) {
+  return createMockRequest({
+    ...options,
+    url,
+  })
+}
+
 export function createMockResponse() {
   const response = {
     body: '',
