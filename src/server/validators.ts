@@ -1,6 +1,12 @@
 import { z } from 'zod'
 
-import type { ArticleSortField, SortOrder } from './types.js'
+import type {
+  AdminArticleListQuery,
+  ArticleListQuery,
+  ArticleSortField,
+  MyArticleListQuery,
+  SortOrder,
+} from './types.js'
 
 const trimmedString = z.string().trim()
 const optionalText = z.string().trim().max(1000).optional().default('')
@@ -183,7 +189,55 @@ export const adminUserListQuerySchema = z.preprocess(
   }),
 )
 
-export type ArticleListQuery = z.infer<typeof articleListQuerySchema> & {
+type ParsedArticleListQuery = z.infer<typeof articleListQuerySchema> & {
+  page?: number
+  pageSize?: number
+  keyword?: string
+  categoryIds?: number[]
+  tagIds?: number[]
   sortField?: ArticleSortField
   sortOrder?: SortOrder
+}
+
+type ParsedAuthorArticleListQuery = ParsedArticleListQuery & {
+  status?: MyArticleListQuery['status']
+}
+
+type ParsedAdminArticleListQuery = ParsedAuthorArticleListQuery & {
+  authorId?: AdminArticleListQuery['authorId']
+}
+
+function normalizeParsedArticleListQuery(query: ParsedArticleListQuery): ArticleListQuery {
+  return {
+    page: query.page ?? 1,
+    pageSize: query.pageSize ?? 20,
+    keyword: query.keyword ?? '',
+    categoryIds: query.categoryIds ?? [],
+    tagIds: query.tagIds ?? [],
+    sortField: query.sortField,
+    sortOrder: query.sortOrder,
+  }
+}
+
+export function parseArticleListQuery(input: unknown): ArticleListQuery {
+  return normalizeParsedArticleListQuery(articleListQuerySchema.parse(input))
+}
+
+export function parseAuthorArticleListQuery(input: unknown): MyArticleListQuery {
+  const query = authorArticleListQuerySchema.parse(input) as ParsedAuthorArticleListQuery
+
+  return {
+    ...normalizeParsedArticleListQuery(query),
+    status: query.status,
+  }
+}
+
+export function parseAdminArticleListQuery(input: unknown): AdminArticleListQuery {
+  const query = adminArticleListQuerySchema.parse(input) as ParsedAdminArticleListQuery
+
+  return {
+    ...normalizeParsedArticleListQuery(query),
+    status: query.status,
+    authorId: query.authorId,
+  }
 }
