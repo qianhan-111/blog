@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Blog Platform 提供公开博客前台、作者工作区与管理员后台的一体化体验。" />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#101828" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Blog Platform" />
+    <meta property="og:description" content="公开博客、作者工作区与管理员后台的一体化前端应用。" />
+    <meta property="og:image" content="/og-default.svg" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Blog Platform" />
+    <meta name="twitter:description" content="公开博客、作者工作区与管理员后台的一体化前端应用。" />
+    <meta name="twitter:image" content="/og-default.svg" />
+    <script>
+      ;(() => {
+        const storageKey = 'blog.theme.preference'
+        const fallbackTheme = 'light'
+
+        try {
+          const storedTheme = window.localStorage.getItem(storageKey)
+          const theme = storedTheme === 'dark' || storedTheme === 'light' ? storedTheme : fallbackTheme
+
+          document.documentElement.dataset.theme = theme
+        } catch {
+          document.documentElement.dataset.theme = fallbackTheme
+        }
+      })()
+    </script>
+    <title>Blog Platform</title>
+  </head>
+  <body>
+    <noscript>Blog Platform 需要启用 JavaScript 才能正常运行。</noscript>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

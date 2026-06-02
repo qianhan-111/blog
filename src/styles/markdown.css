@@ -1,0 +1,162 @@
+@import 'md-editor-v3/lib/style.css';
+
+.markdown-renderer {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.markdown-renderer__surface {
+  padding: clamp(1rem, 2vw, 1.5rem);
+  background: transparent;
+}
+
+.markdown-renderer__catalog {
+  position: sticky;
+  top: 6.5rem;
+  display: grid;
+  gap: 0.75rem;
+  align-self: start;
+}
+
+.markdown-renderer__catalog-title {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent-strong);
+}
+
+.markdown-renderer__catalog-card {
+  padding: 0.75rem;
+  border: 1px solid var(--public-feed-divider);
+  border-radius: var(--public-radius-module);
+  background: var(--public-module-background);
+}
+
+.markdown-renderer .md-editor,
+.markdown-renderer .md-editor-preview-wrapper {
+  background: transparent;
+}
+
+.markdown-renderer .md-editor {
+  border: 0;
+}
+
+.markdown-renderer .md-editor-toolbar,
+.markdown-renderer .md-editor-footer,
+.markdown-renderer .md-editor-content {
+  background: transparent;
+}
+
+.markdown-renderer .md-editor-preview {
+  color: var(--color-text);
+}
+
+.markdown-renderer .md-editor-preview p,
+.markdown-renderer .md-editor-preview li,
+.markdown-renderer .md-editor-preview blockquote {
+  color: var(--color-text);
+}
+
+.markdown-renderer .md-editor-preview h1,
+.markdown-renderer .md-editor-preview h2,
+.markdown-renderer .md-editor-preview h3,
+.markdown-renderer .md-editor-preview h4,
+.markdown-renderer .md-editor-preview h5,
+.markdown-renderer .md-editor-preview h6 {
+  color: var(--color-text);
+}
+
+.markdown-renderer .md-editor-preview blockquote {
+  padding: 0.75rem 0.9rem;
+  border-inline-start: 3px solid var(--color-accent);
+  border-radius: 0 var(--public-radius-compact) var(--public-radius-compact) 0;
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+
+.markdown-renderer .md-editor-preview img {
+  border-radius: var(--public-radius-module);
+}
+
+.markdown-renderer .md-editor-preview code {
+  padding: 0.18rem 0.38rem;
+  border-radius: var(--public-radius-compact);
+  background: var(--color-code-background);
+}
+
+.markdown-renderer .md-editor-preview pre {
+  border: 1px solid var(--public-feed-divider);
+  border-radius: var(--public-radius-module);
+  background: var(--color-code-background);
+}
+
+.markdown-renderer .md-editor-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+
+.markdown-renderer .md-editor-preview th,
+.markdown-renderer .md-editor-preview td {
+  border: 1px solid var(--public-feed-divider);
+  padding: 0.6rem 0.7rem;
+}
+
+.markdown-renderer .md-editor-preview a {
+  color: var(--color-accent-strong);
+}
+
+.markdown-renderer .md-editor-preview pre code {
+  border-radius: 0 0 var(--public-radius-module) var(--public-radius-module);
+  background: transparent;
+}
+
+.markdown-renderer .md-editor-catalog-link span {
+  color: var(--color-muted);
+}
+
+.markdown-renderer .md-editor-catalog-active > span,
+.markdown-renderer .md-editor-catalog-link span:hover {
+  color: var(--color-accent-strong);
+}
+
+:root[data-theme='dark'] .md-editor,
+:root[data-theme='dark'] .md-editor-toolbar,
+:root[data-theme='dark'] .md-editor-footer,
+:root[data-theme='dark'] .md-editor-input,
+:root[data-theme='dark'] .md-editor-input-wrapper,
+:root[data-theme='dark'] .md-editor-preview-wrapper,
+:root[data-theme='dark'] .md-editor-content,
+:root[data-theme='dark'] .md-editor-catalog {
+  background: transparent;
+  color: var(--color-text);
+}
+
+:root[data-theme='dark'] .md-editor-toolbar {
+  border-bottom-color: var(--color-border);
+}
+
+:root[data-theme='dark'] .md-editor-footer {
+  border-top-color: var(--color-border);
+}
+
+:root[data-theme='dark'] .md-editor-toolbar-item,
+:root[data-theme='dark'] .md-editor-toolbar-item > svg,
+:root[data-theme='dark'] .md-editor-catalog-link span,
+:root[data-theme='dark'] .md-editor-input,
+:root[data-theme='dark'] .md-editor-preview {
+  color: var(--color-text);
+}
+
+:root[data-theme='dark'] .markdown-renderer .md-editor-preview code,
+:root[data-theme='dark'] .markdown-renderer .md-editor-preview pre {
+  background: rgba(2, 6, 23, 0.45);
+}
+
+@media (max-width: 960px) {
+  .markdown-renderer__catalog {
+    position: static;
+  }
+}

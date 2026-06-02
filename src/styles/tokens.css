@@ -1,0 +1,73 @@
+:root {
+  color-scheme: light;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --breakpoint-mobile: 640px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-laptop: 1024px;
+  --breakpoint-desktop: 1280px;
+
+  --color-background: #f4f1ea;
+  --color-surface: rgba(255, 255, 255, 0.9);
+  --color-surface-soft: rgba(255, 255, 255, 0.72);
+  --color-text: #1f2933;
+  --color-muted: #52606d;
+  --color-border: rgba(82, 96, 109, 0.2);
+  --color-accent: #b45309;
+  --color-accent-strong: #7c2d12;
+  --color-surface-strong: #172033;
+  --color-on-surface-strong: #f8fafc;
+  --color-input-background: rgba(255, 255, 255, 0.68);
+  --color-overlay: rgba(15, 23, 42, 0.48);
+  --color-danger: #b91c1c;
+  --color-success: #166534;
+  --color-focus-ring: rgba(180, 83, 9, 0.24);
+  --color-code-background: rgba(15, 23, 42, 0.08);
+  --shadow-panel: 0 24px 60px rgba(31, 41, 51, 0.12);
+
+  --public-page-background: #f7f8fa;
+  --public-topbar-background: rgba(255, 255, 255, 0.96);
+  --public-rail-background: rgba(255, 255, 255, 0.72);
+  --public-module-background: rgba(255, 255, 255, 0.86);
+  --public-feed-divider: rgba(31, 41, 51, 0.12);
+  --public-hover-background: rgba(31, 41, 51, 0.045);
+  --public-radius-compact: 6px;
+  --public-radius-module: 8px;
+  --public-space-compact: 0.75rem;
+  --public-space-module: 1rem;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-background: #111827;
+  --color-surface: rgba(17, 24, 39, 0.88);
+  --color-surface-soft: rgba(15, 23, 42, 0.72);
+  --color-text: #f3f4f6;
+  --color-muted: #cbd5e1;
+  --color-border: rgba(148, 163, 184, 0.3);
+  --color-accent: #f59e0b;
+  --color-accent-strong: #fbbf24;
+  --color-surface-strong: #0f172a;
+  --color-on-surface-strong: #f8fafc;
+  --color-input-background: rgba(15, 23, 42, 0.88);
+  --color-overlay: rgba(2, 6, 23, 0.68);
+  --color-danger: #f87171;
+  --color-success: #4ade80;
+  --color-focus-ring: rgba(245, 158, 11, 0.24);
+  --color-code-background: rgba(148, 163, 184, 0.12);
+  --shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.45);
+
+  --public-page-background: #0f1720;
+  --public-topbar-background: rgba(15, 23, 32, 0.96);
+  --public-rail-background: rgba(17, 24, 39, 0.78);
+  --public-module-background: rgba(17, 24, 39, 0.92);
+  --public-feed-divider: rgba(203, 213, 225, 0.22);
+  --public-hover-background: rgba(203, 213, 225, 0.1);
+}

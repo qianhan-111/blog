@@ -1,0 +1,17 @@
+{
+  "name": "Blog Platform",
+  "short_name": "Blog",
+  "description": "公开博客、作者工作区与管理员后台的一体化前端应用。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#101828",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
