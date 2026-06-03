@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { CurrentUser, UserProfile } from '../../../src/server/types'
-import apiHandler from '../../../api/[...path]'
+import apiHandler from '../../../api/index'
 import { createApiRequest, createMockResponse, readJsonResponse } from './test-utils'
 
 const authMocks = vi.hoisted(() => ({

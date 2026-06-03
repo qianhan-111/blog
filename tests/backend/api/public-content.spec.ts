@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import apiHandler from '../../../api/[...path]'
+import apiHandler from '../../../api/index'
 import { createApiRequest, createMockResponse, readJsonResponse } from './test-utils'
 
 const articleMocks = vi.hoisted(() => ({
@@ -127,6 +127,33 @@ describe('public content API endpoints', () => {
       prev: { id: 6, title: 'Prev' },
       next: null,
     })
+  })
+
+  it('routes rewritten Vercel API paths through the single function', async () => {
+    articleMocks.getPublicArticleDetail.mockResolvedValue({ id: 7, title: 'Article' })
+    userRepositoryMocks.findPublicAuthorById.mockResolvedValue({
+      id: 2,
+      username: 'author_demo',
+      nickname: 'Author',
+      avatarUrl: '',
+      bio: '',
+    })
+    const articleResponse = createMockResponse()
+    const authorResponse = createMockResponse()
+
+    await apiHandler(createApiRequest('/api?path=articles/7', {
+      method: 'GET',
+      query: { path: 'articles/7' },
+    }), articleResponse)
+    await apiHandler(createApiRequest('/api?path=authors/2', {
+      method: 'GET',
+      query: { path: 'authors/2' },
+    }), authorResponse)
+
+    expect(articleMocks.getPublicArticleDetail).toHaveBeenCalledWith(7)
+    expect(userRepositoryMocks.findPublicAuthorById).toHaveBeenCalledWith(2)
+    expect(readJsonResponse(articleResponse).data).toEqual({ id: 7, title: 'Article' })
+    expect(readJsonResponse(authorResponse).data).toMatchObject({ username: 'author_demo' })
   })
 
   it('returns author profile and published author articles', async () => {

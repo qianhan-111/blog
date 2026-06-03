@@ -20,6 +20,58 @@ import {
   userStatusPayloadSchema,
 } from './validators.js'
 
+function getRoutePath(value: string | string[] | undefined): string | null {
+  if (Array.isArray(value)) {
+    return value.filter(Boolean).join('/')
+  }
+
+  return value?.trim() || null
+}
+
+function appendQueryValue(params: URLSearchParams, key: string, value: string | string[] | undefined): void {
+  if (Array.isArray(value)) {
+    value.forEach((item) => params.append(key, item))
+    return
+  }
+
+  if (value !== undefined) {
+    params.append(key, value)
+  }
+}
+
+function normalizeApiRequest(request: VercelRequest): VercelRequest {
+  const routePath = getRoutePath(request.query.path)
+
+  if (!routePath) {
+    return request
+  }
+
+  const query = { ...request.query }
+  delete query.path
+
+  const url = new URL(request.url ?? '/', 'http://localhost')
+
+  if (url.pathname !== '/api') {
+    return {
+      ...request,
+      query,
+    }
+  }
+
+  const params = new URLSearchParams()
+
+  Object.entries(query).forEach(([key, value]) => appendQueryValue(params, key, value))
+
+  const search = params.toString()
+  const pathname = `/api/${routePath.replace(/^\/+/, '')}`
+
+  return {
+    ...request,
+    query,
+    url: search ? `${pathname}?${search}` : pathname,
+  }
+}
+
 function getApiSegments(request: VercelRequest): string[] {
   const pathname = new URL(request.url ?? '/', 'http://localhost').pathname
   const normalizedPathname = pathname.replace(/\/+$/, '') || '/'
@@ -33,20 +85,6 @@ function getApiSegments(request: VercelRequest): string[] {
   }
 
   return normalizedPathname.slice('/api/'.length).split('/')
-}
-
-function removeVercelRouteQuery(request: VercelRequest): VercelRequest {
-  if (!('path' in request.query)) {
-    return request
-  }
-
-  const query = { ...request.query }
-  delete query.path
-
-  return {
-    ...request,
-    query,
-  }
 }
 
 async function handlePublicAuthorProfile(request: VercelRequest) {
@@ -209,7 +247,7 @@ async function handleAdminUserStatus(request: VercelRequest) {
 }
 
 export async function routeApiRequest(request: VercelRequest) {
-  const cleanRequest = removeVercelRouteQuery(request)
+  const cleanRequest = normalizeApiRequest(request)
   const segments = getApiSegments(cleanRequest)
 
   if (segments.length === 1 && segments[0] === 'health') {

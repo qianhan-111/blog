@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import apiHandler from '../../../api/[...path]'
+import apiHandler from '../../../api/index'
 import { ApiError } from '../../../src/server/errors'
 import type { CurrentUser } from '../../../src/server/types'
 import { createApiRequest, createMockResponse, readJsonResponse } from './test-utils'
